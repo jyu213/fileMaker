@@ -1,0 +1,14 @@
+{
+  "name": "file-maker",
+  "version": "0.0.1",
+  "description": "file maker with npm cli.",
+  "main": "index.js",
+  "bin": {
+    "filemaker": "./bin/filemaker"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
