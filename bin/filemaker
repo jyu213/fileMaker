@@ -1,52 +1,15 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+let program = require('commander')
 
-const help = () => {
-    const message = `
-        Usage: 'xx',
-        Options:
-            d: xxx
-    `;
-    process.stdout.write(message);
-};
+program.version(require('../package.json').version)
+  // .option('--output <dir>', 'the output file')
+  // .option('--template <dir>', 'the template file')
+  // .option('--data <dir>', 'use source data')
+  .command('create <dir> [options]', 'create file')
+  // .action((dir, options) => {
+  //   console.log(dir, options)
+  // })
+  .parse(process.argv)
 
-let options = {};
-
-// get cli arguments
-let args = process.argv.slice(2);
-console.log(args, 'cli arguments');
-
-let base;
-
-if (args[0] && /^[^-]|\//.test(args[0])) {
-    base = args.shift();
-}
-
-while (args.length > 0) {
-    const value = args.shift();
-
-    switch (value) {
-        case '--output':
-            options.output = args.shift();
-            break;
-        case '--template':
-            options.template = args.shift();
-            break;
-        default:
-            if (!base) {
-                base = value;
-            }
-    }
-}
-
-if (!base) {
-    base = './';
-}
-
-if (!fs.existsSync(base)) {
-    process.stdout.write('Error: directory does not exist\n');
-    process.exit(1);
-}
-console.log(options);
-
+  // console.log(program.template, 'temp')

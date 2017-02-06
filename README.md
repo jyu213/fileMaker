@@ -12,5 +12,16 @@ fm create --opt X
 
 fm create template file (in node_modules ??)
 
+模板语法： `mustache`
 
+```javascript
+{{keyName}}  // 赋值
+{{#keyName}} {{/keyName}}  // if/forEach
+{{^keyName}} {{/keyName}} // 空|null|false
+{{.}}  // 迭代
+{{<partials}}
+{{{keyName}}} // 非转义?
+{{&keyName}}  // 非转义 ?
+{{!comments}} // 注释
+```
 ## F

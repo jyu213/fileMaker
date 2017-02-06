@@ -1,0 +1,7 @@
+{
+    "name": "this is name",
+    "list": ["1", "2", "3"],
+    "object": {
+        "child": "this is child node"
+    }
+}

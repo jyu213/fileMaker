@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+let program = require('commander')
+let FileMaker = require('../lib/make')
+
+program
+  .usage('<output file name> [options]')
+  .option('--template <dir>', 'use template file')
+  .option('--data <dir>', 'use source data')
+  .action((dir) => {
+    if (!dir) {
+      console.log('dir is miss')
+      return program.help()
+    }
+    if (program.template) {
+
+    }
+
+    if (program.data) {
+
+    }
+
+    console.log(dir, program.template, program.data, 'program')
+    let maker = new FileMaker(dir, {
+      template: program.template,
+      templateData: program.data
+    })
+    maker.compile()
+    // console.log(dir, program.template, '~~actions')
+    // console.log(program.args.template, program.args.data)
+  })
+  .parse(process.argv)
+
+let help = () => {
+  return program.help()
+}
+
+// help()
+
