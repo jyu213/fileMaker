@@ -19,9 +19,8 @@ fm create template file (in node_modules ??)
 {{#keyName}} {{/keyName}}  // if/forEach
 {{^keyName}} {{/keyName}} // 空|null|false
 {{.}}  // 迭代
-{{<partials}}
+{{> partils}}
 {{{keyName}}} // 非转义?
-{{&keyName}}  // 非转义 ?
 {{!comments}} // 注释
 ```
 ## F

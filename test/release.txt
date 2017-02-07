@@ -1,0 +1,14 @@
+[DEP]
+    {{dep}}
+[DB1]
+    {{db1}}
+[DB2]
+    {{db2}}
+[NASFILE]
+    {{NASFILE}}
+[NOTIFY]
+    xuchengjian692@pingan.com.cn
+[ADVICE]
+
+[STATEMENT]
+    {{STATEMENT}}

@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
-let program = require('commander')
-let FileMaker = require('../lib/make')
+const program = require('commander')
+const FileMaker = require('../lib/make')
+const inquirer = require('inquirer')
+const co = require('co')
+
+const parseTemplate = require('../lib/parseTemplate')
 
 program
   .usage('<output file name> [options]')
@@ -12,28 +16,46 @@ program
       console.log('dir is miss')
       return program.help()
     }
-    if (program.template) {
+    let maker = new FileMaker(dir)
 
+    if (!program.template) {
+      console.log('error: there is no tempalte file')
+      return false
     }
+    if (!program.data) {
+      const fs = require('fs')
+      const templateFile = fs.readFileSync(program.template, {encoding: 'utf8'})
 
-    if (program.data) {
+      const arr = parseTemplate(templateFile)
+      let schemaArr = []
 
+      if (arr.length > 0) {
+        schemaArr = arr.map((item) => {
+          return {
+            type: 'input',
+            name: item,
+            message: `type the value of ${item}`,
+            default: ''
+          }
+        })
+      }
+
+      // co(function *() {
+      //   let result = yield inquirer.prompt(schemaArr)
+      // })
+
+      inquirer.prompt(schemaArr).then((data) => {
+        console.log(data, 'prompt data')
+        maker.run(program.template, data)
+      }).catch((err) => {
+        console.log(err, 'err')
+      })
+      return false
     }
 
     console.log(dir, program.template, program.data, 'program')
-    let maker = new FileMaker(dir, {
-      template: program.template,
-      templateData: program.data
-    })
-    maker.compile()
-    // console.log(dir, program.template, '~~actions')
-    // console.log(program.args.template, program.args.data)
+    maker.run(program.template, program.data)
   })
   .parse(process.argv)
 
-let help = () => {
-  return program.help()
-}
-
-// help()
 

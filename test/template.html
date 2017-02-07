@@ -1,8 +1,18 @@
 
 {{name}}
+{{ name1 }}
+{{&name2}}
 
 {{#list}}
+{{subname}}
 {{.}}
 {{/list}}
 
+{{^name3}}
+aa
+{{/name3}}
+
+{{! ignore test }}
+
+{{> out.html }}
 {{object.child}}
