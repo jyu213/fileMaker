@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const path = require('path')
+const fs = require('fs')
+const inquirer = require('inquirer')
+// const co = require('co')
+
+let ROOT_PATH
+if (process.env.HOME) {
+  ROOT_PATH = path.resolve(process.env.HOME, '.fileMaker')
+} else if (process.env.HOMEDRIVE) {
+  ROOT_PATH = path.resolve(process.env.HOMEDRIVE, '.fileMaker')
+} else {
+  console.log('Environment variable HOME (Linux) or HOMEPATH (Windows) are not set')
+  ROOT_PATH = path.resolve(__dirname)
+}
+const TEMPLATE_PATH = path.join(ROOT_PATH, 'template')
+const CONFIG_PATH = path.join(ROOT_PATH, 'config.json')
+const CONFIG = require(CONFIG_PATH)
+
+program
+  .usage('[list the template file]')
+  .option('--clear', 'clear select template')
+  .parse(process.argv)
+
+if (!program.clear) {
+  // @TODO: add cache
+  fs.readdir(TEMPLATE_PATH, function (err, files) {
+    if (err) {
+      console.log(err)
+      return false
+    }
+
+    let fileList = {
+      type: 'list',
+      name: 'fileSelect',
+      message: 'select the template',
+      choices: files
+    }
+
+    inquirer.prompt(fileList).then((data) => {
+      const newConfig = Object.assign(CONFIG, {
+        fileSelect: data.fileSelect
+      })
+      fs.writeFileSync(CONFIG_PATH, JSON.stringify(newConfig), {encoding: 'utf8'})
+    })
+  })
+} else {
+  if (CONFIG.fileSelect) {
+    delete CONFIG.fileSelect
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), {encoding: 'utf8'})
+  }
+}

@@ -1,9 +1,23 @@
 #!/usr/bin/env node
 
+const path = require('path')
 const program = require('commander')
 const FileMaker = require('../lib/make')
 const inquirer = require('inquirer')
-const co = require('co')
+// const co = require('co')
+
+let ROOT_PATH
+if (process.env.HOME) {
+  ROOT_PATH = path.resolve(process.env.HOME, '.fileMaker')
+} else if (process.env.HOMEDRIVE) {
+  ROOT_PATH = path.resolve(process.env.HOMEDRIVE, '.fileMaker')
+} else {
+  console.log('Environment variable HOME (Linux) or HOMEPATH (Windows) are not set')
+  ROOT_PATH = path.resolve(__dirname)
+}
+const TEMPLATE_PATH = path.join(ROOT_PATH, 'template')
+const CONFIG_PATH = path.join(ROOT_PATH, 'config.json')
+const CONFIG = require(CONFIG_PATH)
 
 const parseTemplate = require('../lib/parseTemplate')
 
@@ -19,8 +33,14 @@ program
     let maker = new FileMaker(dir)
 
     if (!program.template) {
-      console.log('error: there is no tempalte file')
-      return false
+      // it will read from config file
+      if (CONFIG.fileSelect) {
+        program.template = path.resolve(TEMPLATE_PATH, CONFIG.fileSelect)
+        console.log(program.template, 'program.template')
+      } else {
+        console.log('error: there is no tempalte file or select default template')
+        return false
+      }
     }
     if (!program.data) {
       const fs = require('fs')

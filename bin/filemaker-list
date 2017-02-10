@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const path = require('path')
+const fs = require('fs')
+const chalk = require('chalk')
+
+let ROOT_PATH
+if (process.env.HOME) {
+  ROOT_PATH = path.resolve(process.env.HOME, '.fileMaker')
+} else if (process.env.HOMEDRIVE) {
+  ROOT_PATH = path.resolve(process.env.HOMEDRIVE, '.fileMaker')
+} else {
+  console.log('Environment variable HOME (Linux) or HOMEPATH (Windows) are not set')
+  ROOT_PATH = path.resolve(__dirname)
+}
+const TEMPLATE_PATH = path.join(ROOT_PATH, 'template')
+const CONFIG_PATH = path.join(ROOT_PATH, 'config.json')
+const CONFIG = require(CONFIG_PATH)
+
+fs.readdir(TEMPLATE_PATH, function (err, files) {
+  if (err) {
+    console.log(err)
+    return false
+  }
+
+  const content = `this is FileMaker template list: \n * ${files.map((item) => {
+    return CONFIG.fileSelect === item ? chalk.magenta(item) : item
+  }).join('\n * ')}`
+  console.log(content)
+})
+
+program
+  .usage('<list the template file>')
+  .parse(process.argv)
+
+

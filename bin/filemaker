@@ -3,13 +3,9 @@
 let program = require('commander')
 
 program.version(require('../package.json').version)
-  // .option('--output <dir>', 'the output file')
-  // .option('--template <dir>', 'the template file')
-  // .option('--data <dir>', 'use source data')
   .command('create <dir> [options]', 'create file')
-  // .action((dir, options) => {
-  //   console.log(dir, options)
-  // })
+  .command('list', 'show template list')
+  .command('select', 'select a template')
   .parse(process.argv)
 
   // console.log(program.template, 'temp')
