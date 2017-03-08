@@ -1,19 +1,35 @@
 ## File Maker
-file maker with npm cli.
+模板文件自动生成工具。
 
-## TODO
+### 安装
+```bash
+npm install i-file-maker
+```
 
-`npm install fileMaker -g`
-fileMaker(fm) create file
-fm set --name x --template A
+### 使用
+```
+Usage: filemaker [options] [command]
 
-fm create A --path A --out B
-fm create --opt X
 
-fm create template file (in node_modules ??)
+  Commands:
 
-模板语法： `mustache`
+    create <dir> [options]  create file
+    list                    show template list
+    select                  select a template
+    help [cmd]              display help for [cmd]
 
+  Options:
+
+    -h, --help     output usage information
+    -V, --version  output the version number
+```
+
+`filemaker select` 选择一个需要的模板， `filemaker create <file>` 创建文件。
+
+> 模板文件放在 `~/.filemaker/template` 目录下。暂时需要手动创建。
+> 模板语法： [`mustache`](https://github.com/janl/mustache.js)
+
+### mustache 模板语法
 ```javascript
 {{keyName}}  // 赋值
 {{#keyName}} {{/keyName}}  // if/forEach
@@ -23,4 +39,10 @@ fm create template file (in node_modules ??)
 {{{keyName}}} // 非转义?
 {{!comments}} // 注释
 ```
-## F
+
+
+## TODO
+* 文件批量生成
+* `mustache` 逆向解析
+
+

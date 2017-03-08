@@ -1,6 +1,6 @@
 {
-  "name": "file-maker",
-  "version": "0.0.1",
+  "name": "i-file-maker",
+  "version": "0.0.2",
   "description": "file maker with npm cli.",
   "main": "index.js",
   "bin": {
