@@ -7,7 +7,7 @@ npm install i-file-maker
 ```
 
 ### 使用
-```
+```bash
 Usage: filemaker [options] [command]
 
 
@@ -29,6 +29,17 @@ Usage: filemaker [options] [command]
 > 模板文件放在 `~/.filemaker/template` 目录下。暂时需要手动创建。
 > 模板语法： [`mustache`](https://github.com/janl/mustache.js)
 
+#### create
+```bash
+Usage: filemaker create <output file name> [options]
+
+  Options:
+
+    -h, --help           output usage information
+    -t --template <dir>  use template file
+    -d --data <dir>      use source data
+```
+
 ### mustache 模板语法
 ```javascript
 {{keyName}}  // 赋值
@@ -36,7 +47,7 @@ Usage: filemaker [options] [command]
 {{^keyName}} {{/keyName}} // 空|null|false
 {{.}}  // 迭代
 {{> partils}}
-{{{keyName}}} // 非转义?
+{{{keyName}}} // 非转义
 {{!comments}} // 注释
 ```
 

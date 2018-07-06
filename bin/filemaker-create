@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const path = require('path')
+const fs = require('fs')
 const program = require('commander')
 const FileMaker = require('../lib/make')
 const inquirer = require('inquirer')
-// const co = require('co')
 
 let ROOT_PATH
 if (process.env.HOME) {
@@ -23,8 +23,8 @@ const parseTemplate = require('../lib/parseTemplate')
 
 program
   .usage('<output file name> [options]')
-  .option('--template <dir>', 'use template file')
-  .option('--data <dir>', 'use source data')
+  .option('-t --template <dir>', 'use template file')
+  .option('-d --data <dir>', 'use source data')
   .action((dir) => {
     if (!dir) {
       console.log('dir is miss')
@@ -36,16 +36,25 @@ program
       // it will read from config file
       if (CONFIG.fileSelect) {
         program.template = path.resolve(TEMPLATE_PATH, CONFIG.fileSelect)
-        console.log(program.template, 'program.template')
       } else {
-        console.log('error: there is no tempalte file or select default template')
+        console.log('Error: there is no tempalte file or select default template')
         return false
       }
     }
-    if (!program.data) {
-      const fs = require('fs')
-      const templateFile = fs.readFileSync(program.template, {encoding: 'utf8'})
 
+    if (!program.data) {
+      let templatePath
+      // add support find from root template dir
+      if (fs.existsSync(program.template)) {
+        templatePath = program.template
+      } else if (fs.existsSync(path.resolve(TEMPLATE_PATH, program.template))) {
+        templatePath = path.resolve(TEMPLATE_PATH, program.template)
+      } else {
+        console.log(`Error: can't find template %s`, program.template)
+        return false
+      }
+
+      const templateFile = fs.readFileSync(templatePath, {encoding: 'utf8'})
       const arr = parseTemplate(templateFile)
       let schemaArr = []
 
@@ -60,15 +69,11 @@ program
         })
       }
 
-      // co(function *() {
-      //   let result = yield inquirer.prompt(schemaArr)
-      // })
-
       inquirer.prompt(schemaArr).then((data) => {
         console.log(data, 'prompt data')
-        maker.run(program.template, data)
+        maker.run(templatePath, data)
       }).catch((err) => {
-        console.log(err, 'err')
+        console.log('Error: ', err)
       })
       return false
     }
