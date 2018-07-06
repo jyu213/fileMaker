@@ -1,6 +1,6 @@
 {
   "name": "i-file-maker",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "file maker with npm cli.",
   "main": "index.js",
   "bin": {
@@ -13,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^1.1.3",
-    "co": "^4.6.0",
     "commander": "^2.9.0",
     "inquirer": "^3.0.1",
     "mustache": "^2.3.0"

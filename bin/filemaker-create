@@ -20,17 +20,45 @@ const CONFIG_PATH = path.join(ROOT_PATH, 'config.json')
 const CONFIG = require(CONFIG_PATH)
 
 const parseTemplate = require('../lib/parseTemplate')
+const build = function (destFile, templatePath, program) {
+  let maker = new FileMaker(destFile)
+  if (!program.data) {
+    const templateFile = fs.readFileSync(templatePath, {encoding: 'utf8'})
+    const arr = parseTemplate(templateFile)
+    let schemaArr = []
+
+    if (arr.length > 0) {
+      schemaArr = arr.map((item) => {
+        return {
+          type: 'input',
+          name: item,
+          message: `type the value of ${item}`,
+          default: ''
+        }
+      })
+    }
+
+    inquirer.prompt(schemaArr).then((data) => {
+      console.log(data, 'prompt data')
+      maker.run(templatePath, data)
+    }).catch((err) => {
+      console.log('Error: ', err)
+    })
+    return false
+  }
+
+  console.log(destFile, templatePath, program.data, 'program')
+  maker.run(templatePath, program.data)
+}
 
 program
-  .usage('<output file name> [options]')
+  .usage('[output file name] [options]')
   .option('-t --template <dir>', 'use template file')
   .option('-d --data <dir>', 'use source data')
   .action((dir) => {
     if (!dir) {
-      console.log('dir is miss')
       return program.help()
     }
-    let maker = new FileMaker(dir)
 
     if (!program.template) {
       // it will read from config file
@@ -42,45 +70,35 @@ program
       }
     }
 
-    if (!program.data) {
-      let templatePath
-      // add support find from root template dir
-      if (fs.existsSync(program.template)) {
-        templatePath = program.template
-      } else if (fs.existsSync(path.resolve(TEMPLATE_PATH, program.template))) {
-        templatePath = path.resolve(TEMPLATE_PATH, program.template)
-      } else {
-        console.log(`Error: can't find template %s`, program.template)
-        return false
-      }
-
-      const templateFile = fs.readFileSync(templatePath, {encoding: 'utf8'})
-      const arr = parseTemplate(templateFile)
-      let schemaArr = []
-
-      if (arr.length > 0) {
-        schemaArr = arr.map((item) => {
-          return {
-            type: 'input',
-            name: item,
-            message: `type the value of ${item}`,
-            default: ''
-          }
-        })
-      }
-
-      inquirer.prompt(schemaArr).then((data) => {
-        console.log(data, 'prompt data')
-        maker.run(templatePath, data)
-      }).catch((err) => {
-        console.log('Error: ', err)
-      })
+    let templatePath
+    // add support find from root template dir
+    if (fs.existsSync(program.template)) {
+      templatePath = program.template
+    } else if (fs.existsSync(path.resolve(TEMPLATE_PATH, program.template))) {
+      templatePath = path.resolve(TEMPLATE_PATH, program.template)
+    } else {
+      console.log(`Error: can't find template %s`, program.template)
       return false
     }
 
-    console.log(dir, program.template, program.data, 'program')
-    maker.run(program.template, program.data)
+    // auto create dest file
+    if (dir.indexOf('[object Object]') !== -1) {
+      const destFile = path.basename(templatePath)
+
+      inquirer.prompt({
+        type: 'confirm',
+        name: 'dir',
+        message: `would you want to create file ${destFile}?`,
+        default: destFile
+      }).then((data) => {
+        if (data.dir) {
+          build(destFile, templatePath, program)
+        } else {
+          console.log('Error: must be need dest file name')
+        }
+      })
+      return false
+    }
+    build(dir, templatePath, program)
   })
   .parse(process.argv)
-
-
